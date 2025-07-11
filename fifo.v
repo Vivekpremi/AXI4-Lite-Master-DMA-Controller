@@ -21,7 +21,7 @@
 
 
 module fifo #(parameter DATA_WIDTH=32, DEPTH=16)(
-    input clk, rst_n,
+    input clk, rst,
   input w_en, r_en,
   input [DATA_WIDTH-1:0] data_in,
   output reg [DATA_WIDTH-1:0] data_out,
@@ -42,29 +42,35 @@ module fifo #(parameter DATA_WIDTH=32, DEPTH=16)(
 //    end
     
     //fifo write
+
     always @(posedge clk)begin
-	 if(!rst_n)begin
+	 if(rst)begin
         w_ptr<=0;
     end
         else if(w_en && !full)begin
+            
             fifo[w_ptr]<=data_in;
             w_ptr<=w_ptr+1;
+         
         end
         end
         
     //fifo read
             always @(posedge clk)begin
-				if(!rst_n)begin
+				if(rst)begin
 					r_ptr<=0;
 					data_out<=0; 
 					end
                else if(r_en && !empty)begin
+                
+                
                     data_out<=fifo[r_ptr];
                      r_ptr<=r_ptr+1; 
+         
                 end
                 end
                 
                 //full empty
-                assign full = (w_ptr==DATA_WIDTH)?1:0;
+                assign full = (w_ptr==DEPTH)?1:0;
                 assign empty = (r_ptr==w_ptr);
 endmodule
